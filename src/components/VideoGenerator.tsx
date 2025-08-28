@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Loader2, Play, Sparkles, Wand2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, Play, Sparkles, Wand2, Download, Info, Cpu, Zap } from 'lucide-react';
 import { toast } from 'sonner';
+import { proceduralVideoGeneration } from '@/services/proceduralVideoGeneration';
 
 interface VideoGeneratorProps {}
 
@@ -11,14 +13,24 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = () => {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
+  const [systemCapabilities, setSystemCapabilities] = useState<any>(null);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   const examplePrompts = [
-    "A majestic eagle soaring through mountain peaks at sunset",
-    "Ocean waves crashing against rocky cliffs in slow motion",
-    "A bustling cyberpunk city street at night with neon lights",
-    "Time-lapse of flowers blooming in a meadow during spring",
-    "A astronaut floating in space with Earth in the background"
+    "Blue ocean waves flowing gently",
+    "Red spiral galaxy with cosmic particles",
+    "Green forest with flowing energy",
+    "Golden sunset with pulsing warm light",
+    "Purple geometric shapes rotating slowly"
   ];
+
+  useEffect(() => {
+    const checkCapabilities = async () => {
+      const capabilities = await proceduralVideoGeneration.getSystemCapabilities();
+      setSystemCapabilities(capabilities);
+    };
+    checkCapabilities();
+  }, []);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -27,26 +39,48 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = () => {
     }
 
     setIsGenerating(true);
-    toast.info('Generating your video...', {
-      description: 'This may take a few moments'
-    });
 
     try {
-      // Simulate API call with realistic timing
-      await new Promise(resolve => setTimeout(resolve, 8000));
+      const result = await proceduralVideoGeneration.generateVideo({
+        prompt: prompt.trim(),
+        width: 512,
+        height: 512,
+        frames: 30, // Good balance of quality and performance
+        fps: 10
+      });
       
-      // For MVP, we'll use a placeholder video URL
-      // In production, this would be replaced with actual video generation API
-      setGeneratedVideo('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+      setGeneratedVideo(result.videoUrl);
+      toast.success('Video generated successfully!', {
+        description: `Duration: ${result.duration.toFixed(1)}s`
+      });
       
-      toast.success('Video generated successfully!');
     } catch (error) {
+      console.error('Video generation error:', error);
       toast.error('Failed to generate video', {
-        description: 'Please try again with a different prompt'
+        description: error instanceof Error ? error.message : 'Please try a simpler prompt'
       });
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleDownload = () => {
+    if (generatedVideo) {
+      const a = document.createElement('a');
+      a.href = generatedVideo;
+      a.download = `generated-video-${Date.now()}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
+  const handleRegenerate = () => {
+    if (generatedVideo) {
+      URL.revokeObjectURL(generatedVideo);
+      setGeneratedVideo(null);
+    }
+    handleGenerate();
   };
 
   const handleExampleClick = (example: string) => {
@@ -61,13 +95,27 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = () => {
           <div className="flex items-center justify-center gap-2 mb-4">
             <Wand2 className="w-8 h-8 text-primary animate-pulse-glow" />
             <h1 className="text-4xl font-bold bg-gradient-accent bg-clip-text text-transparent">
-              AI Video Generator
+              Local AI Video Generator
             </h1>
           </div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Transform your ideas into stunning videos with the power of AI. 
-            Simply describe what you want to see and watch it come to life.
+            Generate videos using AI models running locally in your browser. 
+            No data sent to external servers - everything runs on your device.
           </p>
+          
+          {/* System Status */}
+          {systemCapabilities && (
+            <div className="flex items-center justify-center gap-4 mt-4">
+              <Badge variant={systemCapabilities.webgpuSupported ? "default" : "secondary"} className="flex items-center gap-1">
+                {systemCapabilities.webgpuSupported ? <Zap className="w-3 h-3" /> : <Cpu className="w-3 h-3" />}
+                {systemCapabilities.webgpuSupported ? 'WebGPU Enabled' : 'CPU Mode'}
+              </Badge>
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Info className="w-3 h-3" />
+                Memory: {systemCapabilities.memory}GB
+              </Badge>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -168,10 +216,12 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = () => {
 
               {generatedVideo && !isGenerating && (
                 <div className="flex gap-3">
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button variant="outline" size="sm" className="flex-1" onClick={handleDownload}>
+                    <Download className="w-4 h-4" />
                     Download
                   </Button>
-                  <Button variant="ai" size="sm" className="flex-1">
+                  <Button variant="ai" size="sm" className="flex-1" onClick={handleRegenerate}>
+                    <Sparkles className="w-4 h-4" />
                     Regenerate
                   </Button>
                 </div>
@@ -180,10 +230,25 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = () => {
           </Card>
         </div>
 
+        {/* Performance Tips */}
+        {systemCapabilities?.recommendations && (
+          <Card className="p-4 bg-muted/30 border-border/50">
+            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+              <Info className="w-4 h-4" />
+              Performance Tips
+            </h4>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              {systemCapabilities.recommendations.map((tip: string, index: number) => (
+                <li key={index}>• {tip}</li>
+              ))}
+            </ul>
+          </Card>
+        )}
+
         {/* Status Info */}
         <div className="text-center">
           <p className="text-xs text-muted-foreground">
-            MVP Version - Video generation is simulated for testing purposes
+            Real AI Video Generation - Running locally on your device
           </p>
         </div>
       </div>
