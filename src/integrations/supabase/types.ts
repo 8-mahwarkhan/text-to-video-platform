@@ -14,7 +14,150 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      comfyui_models: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_path: string
+          file_size: number | null
+          id: string
+          is_active: boolean
+          model_type: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_path: string
+          file_size?: number | null
+          id?: string
+          is_active?: boolean
+          model_type: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          is_active?: boolean
+          model_type?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      comfyui_settings: {
+        Row: {
+          api_timeout: number
+          auto_retry: boolean
+          created_at: string
+          id: string
+          max_queue_size: number
+          retry_attempts: number
+          server_url: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_timeout?: number
+          auto_retry?: boolean
+          created_at?: string
+          id?: string
+          max_queue_size?: number
+          retry_attempts?: number
+          server_url?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_timeout?: number
+          auto_retry?: boolean
+          created_at?: string
+          id?: string
+          max_queue_size?: number
+          retry_attempts?: number
+          server_url?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      generation_history: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          generation_time: number | null
+          id: string
+          prompt: string
+          settings: Json | null
+          status: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          generation_time?: number | null
+          id?: string
+          prompt: string
+          settings?: Json | null
+          status: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          generation_time?: number | null
+          id?: string
+          prompt?: string
+          settings?: Json | null
+          status?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          is_admin: boolean
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_admin?: boolean
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_admin?: boolean
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
