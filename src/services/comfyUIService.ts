@@ -61,16 +61,32 @@ export class ComfyUIService {
 
   async isServerAvailable(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.config.serverUrl}/system_stats`);
+      // Normalize the server URL to avoid double slashes
+      const normalizedUrl = this.config.serverUrl.replace(/\/+$/, '');
+      const response = await fetch(`${normalizedUrl}/system_stats`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       return response.ok;
     } catch (error) {
+      console.error('ComfyUI server availability check failed:', error);
+      // If it's a CORS error, the server might still be running
+      if (error instanceof TypeError && error.message.includes('CORS')) {
+        console.warn('CORS error detected - ComfyUI server may be running but CORS is not configured');
+        return false;
+      }
       return false;
     }
   }
 
   async connectWebSocket(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const wsUrl = this.config.serverUrl.replace('http', 'ws') + `/ws?clientId=${this.config.clientId}`;
+      // Normalize the server URL and construct WebSocket URL
+      const normalizedUrl = this.config.serverUrl.replace(/\/+$/, '');
+      const wsUrl = normalizedUrl.replace('http', 'ws') + `/ws?clientId=${this.config.clientId}`;
       
       this.ws = new WebSocket(wsUrl);
       
@@ -195,8 +211,10 @@ export class ComfyUIService {
   }
 
   async queuePrompt(workflow: ComfyUIWorkflow): Promise<string> {
-    const response = await fetch(`${this.config.serverUrl}/prompt`, {
+    const normalizedUrl = this.config.serverUrl.replace(/\/+$/, '');
+    const response = await fetch(`${normalizedUrl}/prompt`, {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -223,7 +241,10 @@ export class ComfyUIService {
     return new Promise((resolve, reject) => {
       const checkInterval = setInterval(async () => {
         try {
-          const response = await fetch(`${this.config.serverUrl}/history/${promptId}`);
+          const normalizedUrl = this.config.serverUrl.replace(/\/+$/, '');
+          const response = await fetch(`${normalizedUrl}/history/${promptId}`, {
+            mode: 'cors'
+          });
           
           if (!response.ok) {
             clearInterval(checkInterval);
@@ -242,7 +263,8 @@ export class ComfyUIService {
               const nodeOutput = outputs[nodeId];
               if (nodeOutput.videos && nodeOutput.videos.length > 0) {
                 const video = nodeOutput.videos[0];
-                const videoUrl = `${this.config.serverUrl}/view?filename=${video.filename}&subfolder=${video.subfolder}&type=${video.type}`;
+                const normalizedUrl = this.config.serverUrl.replace(/\/+$/, '');
+                const videoUrl = `${normalizedUrl}/view?filename=${video.filename}&subfolder=${video.subfolder}&type=${video.type}`;
                 resolve(videoUrl);
                 return;
               }
@@ -315,7 +337,10 @@ export class ComfyUIService {
 
   async getModels(): Promise<string[]> {
     try {
-      const response = await fetch(`${this.config.serverUrl}/object_info`);
+      const normalizedUrl = this.config.serverUrl.replace(/\/+$/, '');
+      const response = await fetch(`${normalizedUrl}/object_info`, {
+        mode: 'cors'
+      });
       const data = await response.json();
       
       // Extract available checkpoints

@@ -98,9 +98,15 @@ export function ComfyUIStatus() {
               </p>
               <ol className="text-xs text-yellow-300/80 mt-2 space-y-1 list-decimal list-inside">
                 <li>Install ComfyUI following our setup guide</li>
-                <li>Start ComfyUI with: <code className="bg-black/20 px-1 rounded">python main.py --listen 0.0.0.0 --port 8188</code></li>
+                <li>Start ComfyUI with: <code className="bg-black/20 px-1 rounded">python main.py --listen 0.0.0.0 --port 8188 --enable-cors-header</code></li>
+                <li>Ensure CORS is enabled for localhost connections</li>
                 <li>Refresh this status panel</li>
               </ol>
+              <div className="mt-3 p-2 bg-red-500/10 border border-red-500/20 rounded">
+                <p className="text-xs text-red-400">
+                  <strong>Note:</strong> If ComfyUI is running but still showing as disconnected, this is likely due to CORS policy restrictions when accessing localhost from a hosted environment. Consider using a local development setup or ComfyUI cloud service.
+                </p>
+              </div>
             </div>
           )}
         </div>
