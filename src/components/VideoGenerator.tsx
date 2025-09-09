@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Play, Sparkles, Wand2, Download, Info, Cpu, Zap, Settings, AlertCircle } from 'lucide-react';
+import { Loader2, Play, Sparkles, Wand2, Download, Video, Zap, Rocket, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { proceduralVideoGeneration } from '@/services/proceduralVideoGeneration';
 import { comfyUIService } from '@/services/comfyUIService';
-import { ComfyUIStatus } from '@/components/ComfyUIStatus';
 
 interface VideoGeneratorProps {}
 
@@ -158,262 +157,265 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Wand2 className="w-8 h-8 text-primary animate-pulse-glow" />
-            <h1 className="text-4xl font-bold bg-gradient-accent bg-clip-text text-transparent">
-              AI Video Generator
-            </h1>
-          </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Transform your text prompts into stunning videos using advanced AI technology
-          </p>
-          
-          {/* Generation Mode Indicator */}
-          <div className="flex items-center justify-center gap-2 text-sm">
-            <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-              comfyUIAvailable 
-                ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-            }`}>
-              <div className={`w-2 h-2 rounded-full ${
-                comfyUIAvailable ? 'bg-green-400' : 'bg-yellow-400'
-              }`} />
-              {comfyUIAvailable ? 'ComfyUI AI Generation' : 'Procedural Generation'}
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Hero Section */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-primary opacity-5 blur-3xl"></div>
+        <div className="relative container mx-auto px-4 pt-16 pb-12">
+          <div className="text-center space-y-6 mb-16">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="relative">
+                <Video className="w-12 h-12 text-primary animate-pulse-glow" />
+                <div className="absolute -inset-2 bg-primary/20 rounded-full blur-lg animate-pulse"></div>
+              </div>
+              <h1 className="text-6xl font-bold bg-gradient-accent bg-clip-text text-transparent">
+                AI Video Creator
+              </h1>
+            </div>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Transform your imagination into stunning videos with cutting-edge AI technology. 
+              Create professional videos from simple text descriptions in minutes.
+            </p>
+            
+            {/* Feature badges */}
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+              <Badge variant="secondary" className="px-4 py-2 text-sm bg-primary/10 text-primary border-primary/20">
+                <Rocket className="w-4 h-4 mr-2" />
+                AI Powered
+              </Badge>
+              <Badge variant="secondary" className="px-4 py-2 text-sm bg-accent/10 text-accent-foreground border-accent/20">
+                <Zap className="w-4 h-4 mr-2" />
+                Lightning Fast
+              </Badge>
+              <Badge variant="secondary" className="px-4 py-2 text-sm bg-secondary/10 text-secondary-foreground border-secondary/20">
+                <Star className="w-4 h-4 mr-2" />
+                Professional Quality
+              </Badge>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Input Section */}
-          <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-            <div className="space-y-6">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Video Prompt
-                </label>
-                <Textarea
-                  placeholder={
-                    comfyUIAvailable 
-                      ? "Describe the video you want to generate... (e.g., 'A cat walking in a garden, cinematic style')"
-                      : "Describe the visual style you want... (e.g., 'Blue ocean waves flowing gently')"
-                  }
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  className="min-h-[120px] resize-none bg-background/50 border-border/50 focus:border-primary/50"
-                  disabled={isGenerating}
-                />
-              </div>
-
-              {/* Generation Mode Toggle */}
-              {comfyUIAvailable && (
-                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border/50">
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground flex items-center gap-2">
-                      <Settings className="w-4 h-4" />
-                      Generation Mode
+      {/* Main Content */}
+      <div className="container mx-auto px-4 pb-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Input Section */}
+            <Card className="relative overflow-hidden bg-card/80 backdrop-blur-xl border-border/50 shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
+              <CardContent className="relative p-8 space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                    <Sparkles className="w-6 h-6 text-primary" />
+                    Create Your Video
+                  </h2>
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium text-muted-foreground block">
+                      Describe your vision
                     </label>
-                    <p className="text-xs text-muted-foreground">
-                      {useComfyUI 
-                        ? 'Using ComfyUI for AI-powered video generation'
-                        : 'Using procedural generation for quick results'
-                      }
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Procedural</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setUseComfyUI(!useComfyUI)}
-                      className={`w-12 h-6 p-0 relative ${useComfyUI ? 'bg-primary' : 'bg-muted'}`}
+                    <Textarea
+                      placeholder="A majestic eagle soaring through misty mountains at sunrise, cinematic 4K quality..."
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      className="min-h-[140px] resize-none bg-background/70 border-border/50 focus:border-primary/50 text-base leading-relaxed"
                       disabled={isGenerating}
-                    >
-                      <div className={`w-4 h-4 bg-white rounded-full transition-transform absolute ${
-                        useComfyUI ? 'translate-x-3' : 'translate-x-0'
-                      }`} />
-                    </Button>
-                    <span className="text-sm text-muted-foreground">AI</span>
+                    />
                   </div>
                 </div>
-              )}
 
-              <Button
-                onClick={handleGenerate}
-                disabled={isGenerating || !prompt.trim()}
-                variant="generate"
-                size="lg"
-                className="w-full"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {useComfyUI ? 'Generating AI Video...' : 'Generating Video...'}
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    Generate Video
-                  </>
-                )}
-              </Button>
-
-              {/* Progress Bar */}
-              {isGenerating && (
-                <div className="space-y-2">
-                  <Progress value={progress} className="w-full" />
-                  <p className="text-xs text-muted-foreground text-center">
-                    {statusMessage}
-                  </p>
-                </div>
-              )}
-
-              {/* Example Prompts */}
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Try these example prompts:
-                </p>
-                <div className="space-y-2">
-                  {examplePrompts.map((example, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleExampleClick(example)}
-                      className="text-left w-full p-3 text-sm rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border border-border/30 hover:border-primary/30"
-                      disabled={isGenerating}
-                    >
-                      {example}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Setup Guide Link */}
-              {!comfyUIAvailable && (
-                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                  <div className="flex items-center gap-3">
-                    <div className="text-blue-400">
-                      <AlertCircle className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-blue-400">
-                        Want Real AI Video Generation?
-                      </p>
-                      <p className="text-xs text-blue-300/80 mt-1">
-                        Install ComfyUI locally for professional AI video generation. Check the setup guide for instructions.
-                      </p>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open('https://github.com/comfyanonymous/ComfyUI', '_blank')}
-                      className="text-blue-400 border-blue-500/30 hover:bg-blue-500/10"
-                    >
-                      Setup Guide
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </Card>
-
-          {/* Output Section */}
-          <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Play className="w-5 h-5" />
-                Generated Video
-              </h3>
-
-              <div className="aspect-video bg-muted/30 rounded-lg border border-border/30 flex items-center justify-center overflow-hidden">
-                {isGenerating ? (
-                  <div className="text-center space-y-4">
-                    <div className="animate-pulse-glow">
-                      <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">
-                        {useComfyUI ? 'Generating AI video...' : 'Generating video...'}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {statusMessage}
-                      </p>
-                      <div className="w-full max-w-xs mx-auto">
-                        <Progress value={progress} className="h-1" />
+                {/* Generation Mode Toggle */}
+                {comfyUIAvailable && (
+                  <div className="p-6 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-semibold text-foreground">Generation Mode</h3>
+                        <p className="text-xs text-muted-foreground">
+                          {useComfyUI 
+                            ? 'AI-powered generation with ComfyUI'
+                            : 'Quick procedural generation'
+                          }
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-muted-foreground">Quick</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUseComfyUI(!useComfyUI)}
+                          className={`w-14 h-7 p-0 relative rounded-full transition-all ${
+                            useComfyUI 
+                              ? 'bg-primary shadow-glow-primary' 
+                              : 'bg-muted hover:bg-muted/80'
+                          }`}
+                          disabled={isGenerating}
+                        >
+                          <div className={`w-5 h-5 bg-white rounded-full transition-transform duration-300 absolute ${
+                            useComfyUI ? 'translate-x-3.5' : 'translate-x-0.5'
+                          }`} />
+                        </Button>
+                        <span className="text-sm text-muted-foreground">AI</span>
                       </div>
                     </div>
                   </div>
-                ) : generatedVideo ? (
-                  <video
-                    controls
-                    className="w-full h-full object-cover rounded-lg"
-                    poster="/placeholder.svg"
-                  >
-                    <source src={generatedVideo} type="video/webm" />
-                    <source src={generatedVideo} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                ) : (
-                  <div className="text-center space-y-2">
-                    <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
-                      <Play className="w-8 h-8 text-muted-foreground" />
+                )}
+
+                <Button
+                  onClick={handleGenerate}
+                  disabled={isGenerating || !prompt.trim()}
+                  className="w-full h-14 text-lg font-semibold bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 border-0"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin mr-3" />
+                      {useComfyUI ? 'Creating AI Magic...' : 'Generating Video...'}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5 mr-3" />
+                      Generate Video
+                    </>
+                  )}
+                </Button>
+
+                {/* Progress Bar */}
+                {isGenerating && (
+                  <div className="space-y-4 p-6 rounded-xl bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Progress</span>
+                        <span className="text-primary font-medium">{Math.round(progress)}%</span>
+                      </div>
+                      <Progress value={progress} className="w-full h-2" />
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Your generated video will appear here
+                    <p className="text-sm text-muted-foreground text-center">
+                      {statusMessage}
                     </p>
                   </div>
                 )}
-              </div>
 
-              {generatedVideo && !isGenerating && (
-                <div className="flex gap-3">
-                  <Button variant="outline" size="sm" className="flex-1" onClick={handleDownload}>
-                    <Download className="w-4 h-4" />
-                    Download
-                  </Button>
-                  <Button variant="ai" size="sm" className="flex-1" onClick={handleRegenerate}>
-                    <Sparkles className="w-4 h-4" />
-                    Regenerate
-                  </Button>
+                {/* Example Prompts */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-foreground">✨ Inspiration</h3>
+                  <div className="grid grid-cols-1 gap-2">
+                    {examplePrompts.map((example, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleExampleClick(example)}
+                        className="text-left w-full p-4 text-sm rounded-xl bg-gradient-to-r from-muted/20 to-muted/30 hover:from-primary/10 hover:to-accent/10 transition-all duration-300 border border-border/30 hover:border-primary/30 hover:shadow-lg group"
+                        disabled={isGenerating}
+                      >
+                        <span className="group-hover:text-primary transition-colors">{example}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              )}
-            </div>
-          </Card>
+
+                {!comfyUIAvailable && (
+                  <div className="p-6 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
+                    <div className="text-center space-y-3">
+                      <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto">
+                        <Rocket className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-blue-400 mb-1">
+                          Unlock AI Video Generation
+                        </h4>
+                        <p className="text-xs text-blue-300/80">
+                          Install ComfyUI for professional AI-powered video creation
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open('https://github.com/comfyanonymous/ComfyUI', '_blank')}
+                        className="text-blue-400 border-blue-500/30 hover:bg-blue-500/10"
+                      >
+                        Setup Guide
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Output Section */}
+            <Card className="relative overflow-hidden bg-card/80 backdrop-blur-xl border-border/50 shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-secondary opacity-5"></div>
+              <CardContent className="relative p-8 space-y-6">
+                <h2 className="text-2xl font-semibold text-foreground flex items-center gap-3">
+                  <Play className="w-6 h-6 text-primary" />
+                  Your Video
+                </h2>
+
+                <div className="aspect-video bg-gradient-to-br from-muted/20 to-muted/40 rounded-xl border border-border/30 flex items-center justify-center overflow-hidden relative">
+                  {isGenerating ? (
+                    <div className="text-center space-y-6 p-8">
+                      <div className="relative">
+                        <div className="w-20 h-20 rounded-full bg-gradient-primary opacity-20 animate-pulse absolute inset-0"></div>
+                        <Loader2 className="w-20 h-20 animate-spin text-primary relative" />
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-medium">
+                          {useComfyUI ? 'Creating AI Magic...' : 'Generating Video...'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground max-w-xs">
+                          {statusMessage}
+                        </p>
+                        <div className="w-full max-w-sm mx-auto">
+                          <Progress value={progress} className="h-2" />
+                        </div>
+                      </div>
+                    </div>
+                  ) : generatedVideo ? (
+                    <video
+                      controls
+                      className="w-full h-full object-cover rounded-xl"
+                      poster="/placeholder.svg"
+                    >
+                      <source src={generatedVideo} type="video/webm" />
+                      <source src={generatedVideo} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <div className="text-center space-y-4 p-8">
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto">
+                        <Play className="w-12 h-12 text-primary" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-medium text-foreground">Ready to Create?</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Your amazing video will appear here once generated
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {generatedVideo && !isGenerating && (
+                  <div className="flex gap-4">
+                    <Button variant="outline" className="flex-1 h-12" onClick={handleDownload}>
+                      <Download className="w-4 h-4 mr-2" />
+                      Download
+                    </Button>
+                    <Button className="flex-1 h-12 bg-gradient-primary hover:shadow-glow-primary" onClick={handleRegenerate}>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Regenerate
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
+      </div>
 
-        {/* ComfyUI Status Panel */}
-        <ComfyUIStatus />
-
-        {/* Performance Tips */}
-        {systemCapabilities?.recommendations && (
-          <Card className="p-4 bg-muted/30 border-border/50">
-            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
-              <Info className="w-4 h-4" />
-              {useComfyUI ? 'AI Generation Tips' : 'Performance Tips'}
-            </h4>
-            <ul className="text-xs text-muted-foreground space-y-1">
-              {useComfyUI ? [
-                'Use descriptive prompts with cinematic terms for better results',
-                'Include style keywords like "cinematic", "realistic", "4K quality"',
-                'Video generation may take 2-10 minutes depending on your hardware',
-                'Ensure ComfyUI is running with video generation models installed'
-              ].map((tip: string, index: number) => (
-                <li key={index}>• {tip}</li>
-              )) : systemCapabilities.recommendations.map((tip: string, index: number) => (
-                <li key={index}>• {tip}</li>
-              ))}
-            </ul>
-          </Card>
-        )}
-
-        {/* Status Info */}
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground">
+      {/* Footer */}
+      <div className="container mx-auto px-4 pb-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-sm text-muted-foreground">
             {useComfyUI && comfyUIAvailable 
-              ? 'Real AI Video Generation - Running locally via ComfyUI'
-              : 'Procedural Video Generation - Running locally in browser'
+              ? '🤖 AI Video Generation powered by ComfyUI'
+              : '⚡ Procedural Video Generation running in your browser'
             }
           </p>
         </div>

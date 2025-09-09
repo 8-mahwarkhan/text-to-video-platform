@@ -10,6 +10,7 @@ import { ComfyUISettings } from './admin/ComfyUISettings';
 import { ModelManager } from './admin/ModelManager';
 import { GenerationHistory } from './admin/GenerationHistory';
 import { ComfyUITester } from './admin/ComfyUITester';
+import { ComfyUIStatus } from './ComfyUIStatus';
 
 interface AdminPanelProps {
   user: User;
@@ -93,17 +94,20 @@ export const AdminPanel = ({ user }: AdminPanelProps) => {
           </TabsList>
 
           <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>ComfyUI Configuration</CardTitle>
-                <CardDescription>
-                  Configure your ComfyUI server settings and API parameters
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ComfyUISettings userId={user.id} />
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              <ComfyUIStatus />
+              <Card>
+                <CardHeader>
+                  <CardTitle>ComfyUI Configuration</CardTitle>
+                  <CardDescription>
+                    Configure your ComfyUI server settings and API parameters
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ComfyUISettings userId={user.id} />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="models">
