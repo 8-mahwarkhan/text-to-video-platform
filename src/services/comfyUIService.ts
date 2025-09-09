@@ -48,7 +48,7 @@ export class ComfyUIService {
   private ws: WebSocket | null = null;
   private progressCallback: ((progress: number, status: string) => void) | null = null;
 
-  constructor(serverUrl: string = 'http://127.0.0.1:8188') {
+  constructor(serverUrl: string = 'http://localhost:8188') {
     this.config = {
       serverUrl,
       clientId: this.generateClientId()

@@ -64,7 +64,7 @@ export function ComfyUIStatus() {
           </div>
 
           <div className="text-sm text-muted-foreground">
-            URL: http://127.0.0.1:8188
+            URL: http://localhost:8188
           </div>
 
           {isConnected && models.length > 0 && (
