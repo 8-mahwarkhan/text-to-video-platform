@@ -68,6 +68,8 @@ export const ComfyUISettings = ({ userId }: ComfyUISettingsProps) => {
         .upsert({
           user_id: userId,
           ...settings,
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) throw error;
