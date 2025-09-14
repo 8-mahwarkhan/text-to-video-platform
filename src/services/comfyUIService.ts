@@ -73,10 +73,20 @@ export class ComfyUIService {
       return response.ok;
     } catch (error) {
       console.error('ComfyUI server availability check failed:', error);
-      // If it's a CORS error, the server might still be running
-      if (error instanceof TypeError && error.message.includes('CORS')) {
-        console.warn('CORS error detected - ComfyUI server may be running but CORS is not configured');
-        return false;
+      
+      // Check if it's a CORS error specifically
+      if (error instanceof TypeError && (error.message.includes('CORS') || error.message.includes('Failed to fetch'))) {
+        // Try a simple no-cors request to see if server is running
+        try {
+          await fetch(`${this.config.serverUrl.replace(/\/+$/, '')}/system_stats`, {
+            method: 'GET',
+            mode: 'no-cors'
+          });
+          console.warn('ComfyUI server detected but CORS is blocking requests. Please configure CORS in ComfyUI.');
+          throw new Error('CORS_ERROR');
+        } catch (corsError) {
+          console.warn('ComfyUI server may not be running or CORS is not configured');
+        }
       }
       return false;
     }
